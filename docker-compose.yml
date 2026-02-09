@@ -1,0 +1,24 @@
+services:
+  backend:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: bash -lc "pip install -e . && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: sh -lc "npm install && npm run dev -- --hostname 0.0.0.0 --port 3000"
+    env_file:
+      - ./frontend/.env.local
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
